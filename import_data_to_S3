@@ -6,14 +6,14 @@ import csv
  
 # Snowflake connection parameters
 SNOWFLAKE_ACCOUNT = 'rq22584.central-india.azure'
-SNOWFLAKE_USER = 'npsnehar'
-SNOWFLAKE_PASSWORD = 'QqNLRokVquZu6Ch'
-SNOWFLAKE_WAREHOUSE = 'COMPUTE_WH'
-SNOWFLAKE_DATABASE = 'EX1'
-SNOWFLAKE_SCHEMA = 'public'
+SNOWFLAKE_USER = 'username'
+SNOWFLAKE_PASSWORD = 'password'
+SNOWFLAKE_WAREHOUSE = 'warehouse_name'
+SNOWFLAKE_DATABASE = 'database_name'
+SNOWFLAKE_SCHEMA = 'schema_name'
  
 # S3 parameters
-S3_BUCKET_NAME = 'capstonprj'
+S3_BUCKET_NAME = 'S3_bucket_name'
 S3_UPLOAD_PATH = 'Data/data.zip'  # S3 path without bucket name
  
 # Initialize S3 client
