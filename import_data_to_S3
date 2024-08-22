@@ -1,0 +1,66 @@
+import snowflake.connector
+import zipfile
+import boto3
+import os
+import csv
+ 
+# Snowflake connection parameters
+SNOWFLAKE_ACCOUNT = 'rq22584.central-india.azure'
+SNOWFLAKE_USER = 'npsnehar'
+SNOWFLAKE_PASSWORD = 'QqNLRokVquZu6Ch'
+SNOWFLAKE_WAREHOUSE = 'COMPUTE_WH'
+SNOWFLAKE_DATABASE = 'EX1'
+SNOWFLAKE_SCHEMA = 'public'
+ 
+# S3 parameters
+S3_BUCKET_NAME = 'capstonprj'
+S3_UPLOAD_PATH = 'Data/data.zip'  # S3 path without bucket name
+ 
+# Initialize S3 client
+s3_client = boto3.client('s3',
+       aws_access_key_id='XXXX',       # Replace with your actual access key
+       aws_secret_access_key='XXXX'  # Replace with your actual secret key
+)
+ 
+# CSV file and ZIP file names
+CSV_FILE_NAME = 'table1.csv'
+ZIP_FILE_NAME = 'data.zip'
+ 
+# Step 1: Connect to Snowflake and export data to CSV
+conn = snowflake.connector.connect(
+    user=SNOWFLAKE_USER,
+    password=SNOWFLAKE_PASSWORD,
+    account=SNOWFLAKE_ACCOUNT,
+    warehouse=SNOWFLAKE_WAREHOUSE,
+    database=SNOWFLAKE_DATABASE,
+    schema=SNOWFLAKE_SCHEMA
+)
+ 
+# Define your query
+query = 'SELECT * FROM exe1;'
+ 
+# Execute the query and fetch the results
+with conn.cursor() as cur:
+    cur.execute(query)
+    # Get column headers
+    columns = [col[0] for col in cur.description]
+    # Write the result to a CSV file
+    with open(CSV_FILE_NAME, 'w', newline='') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(columns)  # Write the column headers
+        writer.writerows(cur.fetchall())  # Write the data rows
+ 
+conn.close()
+ 
+# Step 2: Compress the CSV file into a ZIP file
+with zipfile.ZipFile(ZIP_FILE_NAME, 'w', zipfile.ZIP_DEFLATED) as zipf:
+    zipf.write(CSV_FILE_NAME)
+ 
+# Step 3: Upload the ZIP file to S3
+s3_client.upload_file(ZIP_FILE_NAME, S3_BUCKET_NAME, S3_UPLOAD_PATH)
+ 
+# Cleanup: Remove the local CSV and ZIP files if desired
+os.remove(CSV_FILE_NAME)
+os.remove(ZIP_FILE_NAME)
+ 
+print(f"File uploaded to S3: s3://{S3_BUCKET_NAME}/{S3_UPLOAD_PATH}")
