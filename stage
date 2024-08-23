@@ -1,0 +1,35 @@
+create database ex1;
+use database ex1;
+create table exe1 ( account_id int, amount int);
+
+insert into exe1 values (1,100);
+
+select * from EX1.PUBLIC.EXE1;
+
+create or replace file format csv_file_format
+type='csv'
+FIELD_OPTIONALLY_ENCLOSED_BY = '"'; 
+
+ 
+--Integration Object
+create or replace storage integration capstone_int
+  type = external_stage
+  storage_provider = s3
+  enabled = true
+  storage_aws_role_arn = 'XXX'
+  storage_allowed_locations = ('s3://capstonprj/Data/RAW_DATA');
+ 
+  
+  desc integration capstone_int;
+ 
+ 
+  --Create external stage
+  create or replace stage capstone_stage
+  URL = 's3://capstonprj/Data/RAW_DATA'
+  STORAGE_INTEGRATION = capstone_int
+  file_format = csv_file_format;
+
+COPY INTO @EX1.PUBLIC.capstone_stage
+FROM
+EX1.PUBLIC.EXE1 
+FILE_FORMAT = (TYPE = CSV COMPRESSION = GZIP);
