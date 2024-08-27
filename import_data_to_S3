@@ -65,5 +65,3 @@ os.remove(ZIP_FILE_NAME)
  
 print(f"File uploaded to S3: s3://{S3_BUCKET_NAME}/{S3_UPLOAD_PATH}")
 
-
-https://mavericsystems.udemy.com/course/complete-python-bootcamp/learn/lecture/20672526#overview
